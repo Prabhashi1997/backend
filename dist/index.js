@@ -15,5 +15,5 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Listening on http://localhost:${port}`);
 });
-app.use('/app', route_1.default);
+app.use('/', route_1.default);
 //listen() - telling your app to start listening for visitors on a specific address and port, much like how Node listens for connections.

@@ -10,12 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = require("../config/db");
-const add = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const addUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id, name, city, email } = req.body;
         const s = yield db_1.connection.promise().query(`INSERT INTO user (id, name, city, email) 
             VALUES (?, ?, ?, ?)`, [id, name, city, email]);
-        res.status(202).json({
+        res.status(201).json({
             message: "User Created",
         });
     }
@@ -25,10 +25,26 @@ const add = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
 });
-const getAll = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const allUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield db_1.connection.promise().query(`SELECT *  from user;`);
-        res.status(202).json({
+        res.status(200).json({
+            users: data[0],
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            message: err,
+        });
+    }
+});
+const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const data = yield db_1.connection
+            .promise()
+            .query(`SELECT *  from user where id = ?`, [id]);
+        res.status(200).json({
             user: data[0],
         });
     }
@@ -38,7 +54,7 @@ const getAll = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
 });
-const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const { name, city, email } = req.body;
@@ -46,7 +62,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .promise()
             .query(`UPDATE user set name = ?, city = ?, email = ? where id = ?`, [name, city, email, id]);
         res.status(200).json({
-            message: "updated",
+            message: "User updated",
         });
     }
     catch (err) {
@@ -71,26 +87,10 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
 });
-const getById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { id } = req.params;
-        const data = yield db_1.connection
-            .promise()
-            .query(`SELECT *  from user where id = ?`, [id]);
-        res.status(200).json({
-            user: data[0],
-        });
-    }
-    catch (err) {
-        res.status(500).json({
-            message: err,
-        });
-    }
-});
 exports.default = {
-    add,
-    getAll,
-    update,
+    addUser,
+    allUsers,
+    updateUser,
     deleteUser,
-    getById
+    getUser
 };

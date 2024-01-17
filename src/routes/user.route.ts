@@ -6,11 +6,11 @@ import userController from '../controller/user.controller';
 const userRouter = Router();
 
 // specifies the endpoint and the method to call
-userRouter.post('/', userController.add);
-userRouter.get('/', userController.getAll);
-userRouter.patch('/:id', userController.update);
+userRouter.post('/', userController.addUser);
+userRouter.get('/', userController.allUsers);
+userRouter.get('/:id', userController.getUser);
+userRouter.put('/:id', userController.updateUser);
 userRouter.delete('/:id', userController.deleteUser);
-userRouter.get('/:id', userController.getById);
 
 
 

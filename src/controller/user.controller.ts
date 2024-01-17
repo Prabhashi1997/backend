@@ -1,8 +1,6 @@
-import { Router, Request, Response } from 'express';
-import { User } from '../model/user';
 import { connection } from '../config/db';
 
-const add = async (req, res) => {
+ const addUser = async (req, res) => {
     try {
       const {id,  name, city, email } = req.body;
       const s = await connection.promise().query(
@@ -10,7 +8,7 @@ const add = async (req, res) => {
             VALUES (?, ?, ?, ?)`,
         [id, name, city, email]
       );
-      res.status(202).json({
+      res.status(201).json({
         message: "User Created",
       });
     } catch (err) {
@@ -20,12 +18,31 @@ const add = async (req, res) => {
     }
   }
 
-  const getAll = async(req, res) => {
+  const allUsers = async(req, res) => {
     try {
         const data = await connection.promise().query(
           `SELECT *  from user;`
         );
-        res.status(202).json({
+        res.status(200).json({
+          users: data[0],
+        });
+      } catch (err) {
+        res.status(500).json({
+          message: err,
+        });
+      }
+  } 
+  
+  const getUser = async(req, res) => {
+    try {
+        const {id} = req.params
+        const data = await connection
+        .promise()
+        .query(
+          `SELECT *  from user where id = ?`,
+          [id]
+        );
+        res.status(200).json({
           user: data[0],
         });
       } catch (err) {
@@ -33,9 +50,9 @@ const add = async (req, res) => {
           message: err,
         });
       }
-  }  
+  }
 
-  const update = async (req, res) => {
+  const updateUser = async (req, res) => {
     try {
       const { id } = req.params;
       const { name, city, email } = req.body;
@@ -46,7 +63,7 @@ const add = async (req, res) => {
           [ name, city, email, id]
         );
       res.status(200).json({
-        message: "updated",
+        message: "User updated",
       });
     } catch (err) {
       res.status(500).json({
@@ -74,29 +91,12 @@ const add = async (req, res) => {
     }
   }
 
-  const getById = async(req, res) => {
-    try {
-        const {id} = req.params
-        const data = await connection
-        .promise()
-        .query(
-          `SELECT *  from user where id = ?`,
-          [id]
-        );
-        res.status(200).json({
-          user: data[0],
-        });
-      } catch (err) {
-        res.status(500).json({
-          message: err,
-        });
-      }
-  }
+
 
 export default {
-    add,
-    getAll,
-    update,
+    addUser,
+    allUsers,
+    updateUser,
     deleteUser,
-    getById
+    getUser
 };
